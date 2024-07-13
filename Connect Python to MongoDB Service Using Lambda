@@ -1,0 +1,41 @@
+1.Set Up MongoDB on AWS (Amazon DocumentDB):
+
+Go to the Amazon DocumentDB service in the AWS Management Console.
+Create a new cluster.
+
+2.Create a Lambda Function:
+
+Create a new Lambda function with a runtime of Python 3.x.
+Add necessary permissions to access DocumentDB.
+
+3.Install pymongo in Lambda:
+Create a deployment package with pymongo
+
+mkdir package
+cd package
+pip install pymongo -t .
+zip -r ../lambda_function.zip .
+cd ..
+zip -g lambda_function.zip lambda_function.py
+
+4.Lambda Function Code:
+
+import pymongo
+import json
+import os
+
+def lambda_handler(event, context):
+    client = pymongo.MongoClient(os.environ['MONGODB_URI'])
+    db = client.test_database
+    collection = db.test_collection
+
+    data = {"name": "Lambda Test", "type": "example"}
+    collection.insert_one(data)
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Data inserted successfully')
+    }
+
+
+
