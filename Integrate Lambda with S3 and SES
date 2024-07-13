@@ -1,0 +1,39 @@
+1.Create Lambda Function:
+
+Create a new Lambda function with a runtime of Python 3.x.
+Add necessary permissions for S3 and SES.
+
+2.Upload S3 Event Configuration:
+
+Set up an S3 event to trigger the Lambda function when an object is created.
+
+3.Lambda Function Code:
+
+import json
+import boto3
+
+s3 = boto3.client('s3')
+ses = boto3.client('ses')
+
+def lambda_handler(event, context):
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = event['Records'][0]['s3']['object']['key']
+
+    response = s3.get_object(Bucket=bucket, Key=key)
+    content = response['Body'].read().decode('utf-8')
+    email_ids = content.split(',')
+
+    for email in email_ids:
+        ses.send_email(
+            Source='your-email@example.com',
+            Destination={'ToAddresses': [email]},
+            Message={
+                'Subject': {'Data': 'Automated Email'},
+                'Body': {'Text': {'Data': 'This is an automated email'}}
+            }
+        )
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Emails sent successfully')
+    }
