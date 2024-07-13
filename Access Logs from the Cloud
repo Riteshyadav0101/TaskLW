@@ -1,0 +1,15 @@
+Enable CloudWatch Logs:
+
+1. Navigate to the CloudWatch service in the AWS Management Console.
+2. Create a new log group if you don’t have one.
+3. Attach the necessary policies to your instance’s IAM role to allow CloudWatch log access.
+
+SSH into your instance using MobaXterm.
+Download and install the CloudWatch agent:
+
+sudo yum install amazon-cloudwatch-agent -y
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+sudo systemctl start amazon-cloudwatch-agent
+
