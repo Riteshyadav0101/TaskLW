@@ -1,0 +1,43 @@
+1.Create S3 Bucket:
+
+Go to the S3 service in the AWS Management Console.
+Create a new bucket for audio file uploads.
+Create Lambda Function:
+
+2.Navigate to the Lambda service.
+Create a new Lambda function with a runtime of Python 3.x.
+Add the necessary permissions for S3 and Transcribe.
+Configure S3 Event Notification:
+
+3.Go to your S3 bucket.
+Select "Properties" and then "Event Notifications".
+Add a new notification to trigger the Lambda function when a new object is created.
+
+4.Lambda Function Code:
+
+import json
+import boto3
+import os
+
+transcribe = boto3.client('transcribe')
+s3 = boto3.client('s3')
+
+def lambda_handler(event, context):
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = event['Records'][0]['s3']['object']['key']
+
+    job_name = key.split('.')[0] + "-transcription"
+    job_uri = f"s3://{bucket}/{key}"
+
+    transcribe.start_transcription_job(
+        TranscriptionJobName=job_name,
+        Media={'MediaFileUri': job_uri},
+        MediaFormat='mp3',
+        LanguageCode='en-US',
+        OutputBucketName=bucket
+    )
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Transcription job started successfully')
+    }
