@@ -1,0 +1,12 @@
+import boto3
+
+# Initialize the S3 client
+s3 = boto3.client('s3')
+
+# Define your variables
+bucket_name = 'my-example-bucket'
+file_path = 'path/to/your/file.txt'
+object_name = 'uploaded-file.txt'
+
+# Upload the file
+s3.upload_file(file_path, bucket_name, object_name)
